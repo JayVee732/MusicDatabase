@@ -3,15 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MusicDatabase"
+        xmlns:cm="clr-namespace:System.ComponentModel;assembly=System"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <cm:BackgroundWorker x:Key="backgroundWorker"
+            WorkerSupportsCancellation="True"/>
+    </Window.Resources>
     <Grid>
         <Button Content="Search" HorizontalAlignment="Left" Margin="491,60,0,0" VerticalAlignment="Top" Width="75" Name="btnSearch" Click="BtnSearch_ClickAsync"/>
-        <TextBlock Name="txtTest" HorizontalAlignment="Left" Margin="216,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="312" Width="202"/>
-        <Image Name="imgAlbum" HorizontalAlignment="Left" Height="100" Margin="565,125,0,0" VerticalAlignment="Top" Width="100"/>
-        <TextBox Name="txbSearch" HorizontalAlignment="Left" Height="23" Margin="248,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <ComboBox Name="cbxResults" HorizontalAlignment="Left" Margin="42,58,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CbxResults_SelectionChangedAsync"/>
-
+        <TextBlock Name="txtTest" HorizontalAlignment="Left" Margin="372,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="236" Width="202"/>
+        <Image Name="imgAlbum" HorizontalAlignment="Left" Height="200" Margin="579,97,0,0" VerticalAlignment="Top" Width="200"/>
+        <TextBox Name="txbSearch" HorizontalAlignment="Left" Height="23" Margin="248,57,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="196"/>
+        <ListBox Name="lbxResults" HorizontalAlignment="Left" Height="293" Margin="45,97,0,0" VerticalAlignment="Top" Width="230" SelectionChanged="LbxResults_SelectionChanged"/>
     </Grid>
 </Window>

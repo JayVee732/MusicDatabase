@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using System.Threading.Tasks;
-using IF.Lastfm.Core.Objects;
 using IF.Lastfm.Core.Api.Helpers;
+using IF.Lastfm.Core.Objects;
 
 namespace MusicDatabase
 {
@@ -15,46 +17,58 @@ namespace MusicDatabase
     {
         PageResponse<LastAlbum> response;
         LastFmClient client;
+        private BackgroundWorker backgroundWorker;
 
         public MainWindow()
         {
             InitializeComponent();
+            backgroundWorker = (BackgroundWorker)FindResource("backgroundWorker");
         }
 
         private async void BtnSearch_ClickAsync(object sender, RoutedEventArgs e)
         {
             var search = txbSearch.Text;
+            lbxResults.Items.Clear();
             client = new LastFmClient();
-            response = await client.Get(search);
+            response = await client.GetAlbumSearch(search);
 
             foreach (var item in response.Content)
             {
-                cbxResults.Items.Add(item.ArtistName +"-"+ item.Name);
+                lbxResults.Items.Add(item.ArtistName + "-" + item.Name);
             }
         }
 
-        private async void CbxResults_SelectionChangedAsync(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private async void LbxResults_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string selected = cbxResults.SelectedValue.ToString();
+            string selected = lbxResults.SelectedValue.ToString();
             string[] info = selected.Split('-');
             string artist = info[0];
             string album = info[1];
 
             client = new LastFmClient();
             var albumInfo = await client.GetAlbumInfo(artist, album);
-            txtTest.Text = $"{albumInfo.ArtistName} - {albumInfo.Name}\n";
-            imgAlbum.Source = new BitmapImage(new Uri(albumInfo.Images.Large.ToString()));
-
-            var tracks = albumInfo.Tracks.ToList();
-
-
-            foreach (var item in tracks)
+            if (albumInfo == null)
             {
-                txtTest.Text += $"{item.Rank}: {item.Name}\n";
+                txtTest.Text += "No album info available!\n";
             }
-            if (tracks.Count() == 0)
+            else
             {
-                txtTest.Text = "No track info available!\n";
+                txtTest.Text = $"{albumInfo.ArtistName} - {albumInfo.Name}\n";
+                imgAlbum.Source = new BitmapImage(new Uri(albumInfo.Images.Large.ToString()));
+
+                var tracks = albumInfo.Tracks.ToList();
+
+                foreach (var item in tracks)
+                {
+                    if (tracks.Count() != 0)
+                    {
+                        txtTest.Text += $"{item.Rank}: {item.Name}\n";
+                    }
+                    else
+                    {
+                        txtTest.Text += "No track info available!\n";
+                    }
+                }
             }
         }
     }
